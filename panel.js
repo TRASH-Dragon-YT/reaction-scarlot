@@ -42,6 +42,7 @@ module.exports = {
     
           const options = guildData.roles.map((x) => {
             const role = interaction.guild.roles.cache.get(x.roleId);
+	    const role2 = interaction.guild.roles.cache.get(x.role2Id);
             const server = interaction.guild
     
               if(!role){
@@ -49,22 +50,35 @@ module.exports = {
              
                   // oh okay then! and also can u fix the permissions so only "MANAGE_ROLES" can use add role remove and panel cmd
               }
-            return {
+	      if(!role2){
+                  interaction.followUp('❌ | No role(s) found!')
+             
+                  // oh okay then! and also can u fix the permissions so only "MANAGE_ROLES" can use add role remove and panel cmd
+              }
+            return [{
               label: role.name,
               value: role.id,
               description: x.roleDescription || "No description",
               emoji: x.roleEmoji
-            };
+            }, {
+	      label: role2.name,
+              value: role2.id,
+              description: x.roleDescription || "No description",
+              emoji: x.roleEmoji2 
+	    }]
           });
     
           const panelEmbed = new MessageEmbed()
           .setTitle(`${interaction.guild.name} role system`)
           .setDescription(namedropdownem)
           .setColor("RANDOM")
+	  
+	  const components = []
     
-          const components = [
-            new MessageActionRow().addComponents(new MessageSelectMenu().setCustomId("reaction-roles").setMaxValues(1).addOptions(options)
-          )
+	  options.map(option => {
+           components.push(new MessageActionRow().addComponents(new MessageSelectMenu().setCustomId("reaction-roles").setMaxValues(1).addOptions(option))
+	  })
+	  
           ];
     
           interaction.reply({ embeds: [ panelEmbed ], components });
